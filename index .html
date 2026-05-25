@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="description" content="EletroJá - Conectando eletricistas e clientes para manutenção e instalação elétrica">
+    <title>EletroJá - Chamou, resolveu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0B1120 0%, #0A0F1C 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            color: #F1F5F9;
+            padding: 0 12px 24px 12px;
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #1E293B; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #F59E0B; border-radius: 10px; }
+
+        header {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(20px);
+            border-radius: 2rem;
+            margin: 16px 0 20px 0;
+            padding: 18px 20px;
+            text-align: center;
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            box-shadow: 0 12px 25px -12px rgba(0,0,0,0.5);
+        }
+
+        header h1 {
+            font-size: 28px;
+            background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+        }
+
+        header p {
+            font-size: 13px;
+            color: #94A3B8;
+            margin-top: 6px;
+        }
+
+        .card {
+            background: rgba(30, 41, 59, 0.65);
+            backdrop-filter: blur(12px);
+            border-radius: 32px;
+            padding: 20px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            transition: transform 0.2s ease, border 0.2s;
+        }
+
+        .card:hover {
+            border-color: rgba(245, 158, 11, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .card h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #F59E0B;
+            border-left: 4px solid #F59E0B;
+            padding-left: 12px;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 14px 16px;
+            background: #0F172A;
+            border: 1.5px solid #334155;
+            border-radius: 28px;
+            font-size: 15px;
+            color: #F1F5F9;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #F59E0B;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+            background: #111827;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 16px;
+            background: linear-gradient(95deg, #F59E0B, #FBBF24);
+            color: #0F172A;
+            cursor: pointer;
+            transition: all 0.25s;
+            margin-top: 8px;
+            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid #F59E0B;
+            color: #F59E0B;
+            box-shadow: none;
+        }
+
+        .btn-small {
+            padding: 10px;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .resultado {
+            background: #0A0F1C;
+            border-radius: 24px;
+            padding: 18px;
+            margin-top: 20px;
+            border-left: 4px solid #F59E0B;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .hour-section {
+            background: rgba(245, 158, 11, 0.08);
+            border-radius: 24px;
+            padding: 16px;
+            margin-top: 16px;
+            border: 1px dashed #F59E0B;
+        }
+
+        .hour-section h3 {
+            color: #F59E0B;
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        .hour-input-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .hour-input-group input {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        /* Timer / Cronômetro */
+        .timer-container {
+            background: linear-gradient(135deg, #1E293B, #0F172A);
+            border-radius: 28px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+            border: 2px solid #F59E0B;
+        }
+
+        .timer-display {
+            font-size: 48px;
+            font-weight: 800;
+            font-family: 'Courier New', monospace;
+            color: #F59E0B;
+            letter-spacing: 4px;
+            margin-bottom: 15px;
+        }
+
+        .timer-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .timer-buttons button {
+            flex: 1;
+            margin-top: 0;
+            padding: 12px;
+            font-size: 14px;
+        }
+
+        .timer-buttons .btn-start {
+            background: linear-gradient(95deg, #22C55E, #16A34A);
+            color: white;
+        }
+
+        .timer-buttons .btn-pause {
+            background: linear-gradient(95deg, #F59E0B, #D97706);
+            color: white;
+        }
+
+        .timer-buttons .btn-reset {
+            background: linear-gradient(95deg, #EF4444, #DC2626);
+            color: white;
+        }
+
+        .valor-hora-info {
+            font-size: 14px;
+            text-align: center;
+            margin-top: 12px;
+            color: #94A3B8;
+        }
+
+        /* Serviços personalizados */
+        .custom-service-item {
+            background: #0F172A;
+            border-radius: 20px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .custom-service-name {
+            font-weight: 600;
+            color: #F59E0B;
+        }
+
+        .custom-service-value {
+            color: #22C55E;
+            font-weight: bold;
+        }
+
+        .delete-custom-btn {
+            background: #EF4444;
+            padding: 6px 12px;
+            font-size: 12px;
+            width: auto;
+            margin: 0;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal-card {
+            background: #111827;
+            width: 90%;
+            max-width: 380px;
+            border-radius: 48px;
+            padding: 32px 24px;
+            text-align: center;
+            border: 1px solid #F59E0B;
+        }
+
+        .modal-card h2 {
+            color: #F59E0B;
+            margin-bottom: 24px;
+            font-size: 28px;
+        }
+
+        .user-badge {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            background: #0F172A80;
+            padding: 6px 16px;
+            border-radius: 40px;
+            width: fit-content;
+            margin-left: auto;
+            backdrop-filter: blur(8px);
+        }
+
+        .user-badge span { color: #F59E0B; font-weight: 600; }
+
+        .logout-btn {
+            background: none;
+            border: 1px solid #F59E0B;
+            color: #F59E0B;
+            padding: 6px 14px;
+            font-size: 12px;
+            width: auto;
+            margin: 0;
+            box-shadow: none;
+            border-radius: 40px;
+        }
+
+        .toggle-hour-btn {
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid #F59E0B;
+            color: #F59E0B;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .servico-info {
+            font-size: 12px;
+            color: #94A3B8;
+            margin-top: 8px;
+            padding: 8px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        @media (max-width: 500px) {
+            body { padding: 0 10px 20px 10px; }
+            .hour-input-group { flex-direction: column; gap: 8px; }
+            .timer-display { font-size: 36px; }
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #475569;
+            margin-top: 24px;
+            padding: 16px;
+        }
+
+        .badge-pro {
+            display: inline-block;
+            background: #F59E0B20;
+            color: #F59E0B;
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-size: 11px;
+            margin-left: 8px;
+        }
+
+        select optgroup {
+            background: #1E293B;
+            color: #F59E0B;
+            font-weight: bold;
+        }
+
+        select option {
+            background: #0F172A;
+            color: #F1F5F9;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Modal de Login -->
+<div id="loginModal" class="modal">
+    <div class="modal-card">
+        <h2>⚡ ELETROJÁ</h2>
+        <p style="margin-bottom: 20px; color:#CBD5E1;">Conectando eletricistas e clientes</p>
+        <input type="email" id="loginEmail" placeholder="E-mail profissional" autocomplete="email">
+        <input type="password" id="loginSenha" placeholder="Senha" autocomplete="current-password">
+        <button id="btnLogin">ENTRAR →</button>
+        <button id="btnCadastroSimples" class="btn-outline" style="margin-top:12px;">Criar nova conta</button>
+        <p style="font-size: 12px; margin-top: 16px; color:#64748B;">demo: eletro@ja.com / 123456</p>
+    </div>
+</div>
+
+<!-- Conteúdo Principal -->
+<div id="appContent" style="display: none;">
+    <div class="user-badge">
+        <span>👤 </span><span id="userEmailDisplay">usuario</span>
+        <button id="logoutGlobalBtn" class="logout-btn">Sair</button>
+    </div>
+
+    <header>
+        <h1>⚡ ELETROJÁ <span class="badge-pro">Chamou, resolveu</span></h1>
+        <p>Orçamentos • Por Hora com Timer • Comunidade</p>
+    </header>
+
+    <div class="card">
+        <h2>📋 Novo Orçamento</h2>
+        
+        <button id="toggleHourMode" class="toggle-hour-btn">⏱️ Ativar Serviço por Hora</button>
+        
+        <div class="input-group">
+            <input type="text" id="cliente" placeholder="Nome do Cliente *">
+        </div>
+        
+        <!-- Modo fixo -->
+        <div id="fixedServiceMode">
+            <div class="input-group">
+                <select id="servico">
+                    <!-- Serviços carregados via JavaScript -->
+                </select>
+            </div>
+            <div class="servico-info" id="servicoInfo">
+                💡 Selecione um serviço para ver o valor
+            </div>
+            
+            <!-- Área de serviço personalizado -->
+            <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #334155;">
+                <button type="button" onclick="abrirModalPersonalizado()" class="btn-small" style="background: #8B5CF6; margin-bottom: 12px;">✨ + Adicionar Serviço Personalizado</button>
+                <div id="customServicesList"></div>
+            </div>
+            
+            <div class="input-group">
+                <input type="number" id="quantidade" placeholder="Quantidade" value="1" min="1">
+            </div>
+        </div>
+        
+        <!-- Modo por hora com TIMER -->
+        <div id="hourServiceMode" style="display: none;">
+            <div class="hour-section">
+                <h3>⏱️ SERVIÇO POR HORA TRABALHADA</h3>
+                
+                <!-- CRONÔMETRO -->
+                <div class="timer-container">
+                    <div class="timer-display" id="timerDisplay">00:00:00</div>
+                    <div class="timer-buttons">
+                        <button id="timerStartBtn" class="btn-start">▶ INICIAR</button>
+                        <button id="timerPauseBtn" class="btn-pause">⏸ PAUSAR</button>
+                        <button id="timerResetBtn" class="btn-reset">🔄 ZERAR</button>
+                    </div>
+                    <div class="valor-hora-info">
+                        ⏱️ Tempo trabalhado: <span id="horasCalculadas">0.00</span> horas
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <input type="text" id="servicoDescricao" placeholder="Descrição do serviço">
+                </div>
+                <div class="hour-input-group">
+                    <input type="number" id="horasTrabalhadas" placeholder="Horas (manual)" step="0.5" value="1">
+                    <input type="number" id="valorHora" placeholder="Valor/hora (R$)" step="1" value="85">
+                </div>
+                <div class="input-group">
+                    <select id="categoriaHora">
+                        <option value="85">🔧 Serviço Básico - R$85/h</option>
+                        <option value="110">⚙️ Manutenção Intermediária - R$110/h</option>
+                        <option value="150">🔌 Instalação Avançada - R$150/h</option>
+                        <option value="200">🚨 Emergência 24h - R$200/h</option>
+                    </select>
+                </div>
+                <button type="button" onclick="usarTempoDoTimer()" class="btn-small" style="margin-top: 10px;">⏰ Usar tempo do cronômetro</button>
+            </div>
+        </div>
+        
+        <div class="input-group">
+            <input type="text" id="material" placeholder="Material Utilizado (opcional)">
+        </div>
+        <div class="input-group">
+            <input type="number" id="valorMaterial" placeholder="Valor Material (R$)" value="0">
+        </div>
+        
+        <button onclick="gerarOrcamento()">✨ GERAR ORÇAMENTO</button>
+        
+        <div class="resultado" id="resultado">
+            📄 Seu orçamento aparecerá aqui...
+        </div>
+        
+        <button onclick="enviarWhatsapp()" style="background: #25D366; color:white;">📱 ENVIAR NO WHATSAPP</button>
+    </div>
+
+    <div class="card">
+        <h2>💬 Comunidade EletroJá</h2>
+        <div class="chat" id="chat">
+            <div class="msg"><strong>Carlos Silva:</strong> Alguém tem indicação de disjuntor para chuveiro 5500W?</div>
+            <div class="msg"><strong>Mariana Souza:</strong> Uso DR de 32A, nunca tive problemas!</div>
+            <div class="msg"><strong>EletroJá Oficial:</strong> Bem-vindos à comunidade! ⚡</div>
+        </div>
+        <div class="input-group">
+            <input type="text" id="mensagem" placeholder="Digite sua mensagem">
+        </div>
+        <button onclick="enviarMensagem()">ENVIAR MENSAGEM</button>
+    </div>
+
+    <div class="footer">
+        EletroJá © 2026 — Chamou, resolveu. Conectando profissionais e clientes.
+    </div>
+</div>
+
+<!-- Modal para serviço personalizado -->
+<div id="customModal" class="modal" style="display: none;">
+    <div class="modal-card">
+        <h2>✨ Novo Serviço</h2>
+        <input type="text" id="customNome" placeholder="Nome do serviço">
+        <input type="number" id="customValor" placeholder="Valor (R$)" step="1">
+        <button onclick="adicionarServicoPersonalizado()">ADICIONAR</button>
+        <button onclick="fecharModalPersonalizado()" class="btn-outline" style="margin-top:12px;">CANCELAR</button>
+    </div>
+</div>
+
+<script>
+    // ==================== TABELA DE SERVIÇOS COMPLETA ====================
+    const tabelaServicos = {
+        "ILUMINAÇÃO": [
+            {nome:"Instalação spot simples", valor:50},
+            {nome:"Spot direcionável", valor:65},
+            {nome:"Plafon simples", valor:70},
+            {nome:"Painel LED embutir", valor:90},
+            {nome:"Painel sobrepor", valor:80},
+            {nome:"Perfil LED instalado", valor:220},
+            {nome:"Fita LED", valor:50},
+            {nome:"Pendente simples", valor:250},
+            {nome:"Pendente duplo/triplo", valor:450},
+            {nome:"Lustre simples", valor:300},
+            {nome:"Lustre cristal/grande", valor:500},
+            {nome:"Refletor LED", valor:180},
+            {nome:"Arandela", valor:120},
+            {nome:"Trilho eletrificado", valor:220}
+        ],
+        "TOMADAS E INTERRUPTORES": [
+            {nome:"Tomada simples", valor:50},
+            {nome:"Tomada dupla", valor:70},
+            {nome:"Tomada 20A", valor:75},
+            {nome:"Interruptor simples", valor:55},
+            {nome:"Interruptor paralelo", valor:120},
+            {nome:"Interruptor intermediário", valor:150},
+            {nome:"Conjunto tomada + interruptor", valor:110},
+            {nome:"Campainha/interfone", valor:300}
+        ],
+        "INFRAESTRUTURA": [
+            {nome:"Eletroduto PVC embutido", valor:25},
+            {nome:"Eletroduto galvanizado", valor:50},
+            {nome:"Perfilado", valor:80},
+            {nome:"Eletrocalha", valor:120},
+            {nome:"Leito aramado", valor:140},
+            {nome:"Canaleta", valor:35},
+            {nome:"Passagem de cabo simples", valor:12},
+            {nome:"Passagem cabo grosso", valor:40}
+        ],
+        "QUADROS ELÉTRICOS": [
+            {nome:"Montagem quadro pequeno", valor:600},
+            {nome:"Quadro residencial completo", valor:1500},
+            {nome:"Quadro comercial", valor:5000},
+            {nome:"Troca disjuntor simples", valor:120},
+            {nome:"Instalação DR", valor:250},
+            {nome:"Instalação DPS", valor:180},
+            {nome:"Identificação circuitos", valor:450}
+        ],
+        "PADRÃO / ENTRADA": [
+            {nome:"Padrão monofásico", valor:1800},
+            {nome:"Padrão bifásico", valor:2500},
+            {nome:"Padrão trifásico", valor:5000},
+            {nome:"Troca poste padrão", valor:2500},
+            {nome:"Aterramento completo", valor:1200}
+        ],
+        "CHUVEIROS E EQUIPAMENTOS": [
+            {nome:"Instalação chuveiro", valor:180},
+            {nome:"Torneira elétrica", valor:150},
+            {nome:"Cooktop elétrico", valor:250},
+            {nome:"Forno elétrico", valor:300},
+            {nome:"Coifa", valor:450},
+            {nome:"Bomba d'água", valor:1200}
+        ],
+        "AUTOMAÇÃO / ESPECIAL": [
+            {nome:"Instalação Alexa", valor:500},
+            {nome:"Interruptor smart", valor:180},
+            {nome:"Automação iluminação", valor:5000},
+            {nome:"Fechadura digital", valor:450},
+            {nome:"Sensor presença", valor:180},
+            {nome:"Câmera segurança", valor:350}
+        ],
+        "AR CONDICIONADO": [
+            {nome:"Infra elétrica ar 9k/12k", valor:600},
+            {nome:"Infra 18k/24k", valor:900},
+            {nome:"Circuito exclusivo", valor:700}
+        ],
+        "VALORES POR DIÁRIA": [
+            {nome:"Eletricista profissional", valor:800},
+            {nome:"Ajudante", valor:250}
+        ]
+    };
+
+    // Serviços personalizados (salvos no localStorage)
+    let servicosPersonalizados = [];
+
+    function carregarServicosPersonalizados() {
+        const stored = localStorage.getItem("eletroja_custom_services");
+        if(stored) {
+            servicosPersonalizados = JSON.parse(stored);
+        }
+        atualizarListaPersonalizados();
+    }
+
+    function salvarServicosPersonalizados() {
+        localStorage.setItem("eletroja_custom_services", JSON.stringify(servicosPersonalizados));
+    }
+
+    function abrirModalPersonalizado() {
+        document.getElementById("customModal").style.display = "flex";
+    }
+
+    function fecharModalPersonalizado() {
+        document.getElementById("customModal").style.display = "none";
+        document.getElementById("customNome").value = "";
+        document.getElementById("customValor").value = "";
+    }
+
+    function adicionarServicoPersonalizado() {
+        const nome = document.getElementById("customNome").value.trim();
+        const valor = parseFloat(document.getElementById("customValor").value);
+        
+        if(!nome || isNaN(valor) || valor <= 0) {
+            alert("Preencha nome e valor válido do serviço");
+            return;
+        }
+        
+        servicosPersonalizados.push({ nome, valor, personalizado: true });
+        salvarServicosPersonalizados();
+        atualizarListaPersonalizados();
+        recarregarSelectServicos();
+        fecharModalPersonalizado();
+    }
+
+    function removerServicoPersonalizado(index) {
+        servicosPersonalizados.splice(index, 1);
+        salvarServicosPersonalizados();
+        atualizarListaPersonalizados();
+        recarregarSelectServicos();
+    }
+
+    function atualizarListaPersonalizados() {
+        const container = document.getElementById("customServicesList");
+        if(!container) return;
+        
+        if(servicosPersonalizados.length === 0) {
+            container.innerHTML = '<div style="font-size:12px; color:#64748B; text-align:center; padding:8px;">Nenhum serviço personalizado ainda</div>';
+            return;
+        }
+        
+        container.innerHTML = '<div style="font-size:12px; color:#F59E0B; margin-bottom:8px;">📌 Seus serviços:</div>';
+        servicosPersonalizados.forEach((serv, idx) => {
+            container.innerHTML += `
+                <div class="custom-service-item">
+                    <span class="custom-service-name">${serv.nome}</span>
+                    <span class="custom-service-value">R$ ${serv.valor}</span>
+                    <button onclick="removerServicoPersonalizado(${idx})" class="delete-custom-btn">🗑️</button>
+                </div>
+            `;
+        });
+    }
+
+    function recarregarSelectServicos() {
+        const select = document.getElementById("servico");
+        if(!select) return;
+        
+        select.innerHTML = "";
+        
+        // Adicionar serviços personalizados primeiro (destaque)
+        if(servicosPersonalizados.length > 0) {
+            let grupoCustom = document.createElement("optgroup");
+            grupoCustom.label = "✨ MEUS SERVIÇOS PERSONALIZADOS";
+            grupoCustom.style.color = "#8B5CF6";
+            
+            servicosPersonalizados.forEach(servico => {
+                let option = document.createElement("option");
+                option.value = servico.valor;
+                option.text = `✨ ${servico.nome} - R$ ${servico.valor}`;
+                option.setAttribute("data-nome", servico.nome);
+                grupoCustom.appendChild(option);
+            });
+            select.appendChild(grupoCustom);
+        }
+        
+        // Adicionar serviços padrão
+        for(let categoria in tabelaServicos) {
+            let grupo = document.createElement("optgroup");
+            grupo.label = categoria;
+            grupo.style.fontWeight = "bold";
+            grupo.style.color = "#F59E0B";
+            
+            tabelaServicos[categoria].forEach(servico => {
+                let option = document.createElement("option");
+                option.value = servico.valor;
+                option.text = `${servico.nome} - R$ ${servico.valor}`;
+                option.setAttribute("data-nome", servico.nome);
+                grupo.appendChild(option);
+            });
+            select.appendChild(grupo);
+        }
+        
+        select.addEventListener("change", function() {
+            const selectedOption = select.options[select.selectedIndex];
+            const nomeServico = selectedOption.getAttribute("data-nome") || selectedOption.text.split(" - ")[0];
+            const valor = parseFloat(select.value);
+            document.getElementById("servicoInfo").innerHTML = `💡 Serviço selecionado: ${nomeServico} - R$ ${valor.toFixed(2)}`;
+        });
+        
+        if(select.options.length > 0) {
+            const firstOption = select.options[0];
+            const nomeServico = firstOption.getAttribute("data-nome") || firstOption.text.split(" - ")[0];
+            document.getElementById("servicoInfo").innerHTML = `💡 Serviço selecionado: ${nomeServico} - R$ ${firstOption.value}`;
+        }
+    }
+
+    // ==================== TIMER / CRONÔMETRO ====================
+    let timerInterval = null;
+    let timerSeconds = 0;
+    let timerRunning = false;
+
+    function formatTime(seconds) {
+        const hrs = Math.floor(seconds / 3600);
+        const mins = Math.floor((seconds % 3600) / 60);
+        const secs = seconds % 60;
+        return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    function updateTimerDisplay() {
+        document.getElementById("timerDisplay").innerText = formatTime(timerSeconds);
+        const horas = timerSeconds / 3600;
+        document.getElementById("horasCalculadas").innerText = horas.toFixed(2);
+    }
+
+    function startTimer() {
+        if(timerRunning) return;
+        timerRunning = true;
+        timerInterval = setInterval(() => {
+            timerSeconds++;
+            updateTimerDisplay();
+        }, 1000);
+    }
+
+    function pauseTimer() {
+        if(timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+        timerRunning = false;
+    }
+
+    function resetTimer() {
+        pauseTimer();
+        timerSeconds = 0;
+        updateTimerDisplay();
+    }
+
+    function usarTempoDoTimer() {
+        const horas = timerSeconds / 3600;
+        if(horas > 0) {
+            document.getElementById("horasTrabalhadas").value = horas.toFixed(2);
+            alert(`✅ Tempo do cronômetro aplicado: ${horas.toFixed(2)} horas`);
+        } else {
+            alert("⏱️ O cronômetro está zerado. Inicie o timer primeiro!");
+        }
+    }
+
+    // ==================== SISTEMA DE AUTENTICAÇÃO ====================
+    let users = [];
+    let hourModeActive = false;
+    let textoWhatsapp = "";
+
+    function loadUsers() {
+        const stored = localStorage.getItem("eletroja_users");
+        if(stored) {
+            users = JSON.parse(stored);
+        } else {
+            users = [
+                { email: "eletro@ja.com", senha: "123456", nome: "Eletricista Pro" },
+                { email: "cliente@teste.com", senha: "cliente123", nome: "Cliente Demo" }
+            ];
+            saveUsers();
+        }
+    }
+
+    function saveUsers() {
+        localStorage.setItem("eletroja_users", JSON.stringify(users));
+    }
+
+    function registerUser(email, senha) {
+        if(!email || !senha) return false;
+        if(users.find(u => u.email === email)) return false;
+        users.push({ email: email, senha: senha, nome: email.split('@')[0] });
+        saveUsers();
+        return true;
+    }
+
+    function loginUser(email, senha) {
+        const user = users.find(u => u.email === email && u.senha === senha);
+        if(user) {
+            localStorage.setItem("eletroja_logado", JSON.stringify({ email: user.email, nome: user.nome || email.split('@')[0] }));
+            return true;
+        }
+        return false;
+    }
+
+    function isLoggedIn() {
+        const logged = localStorage.getItem("eletroja_logado");
+        if(logged) {
+            try {
+                return JSON.parse(logged);
+            } catch(e) { return null; }
+        }
+        return null;
+    }
+
+    function logout() {
+        localStorage.removeItem("eletroja_logado");
+        document.getElementById("loginModal").style.display = "flex";
+        document.getElementById("appContent").style.display = "none";
+    }
+
+    function afterLogin(userData) {
+        document.getElementById("loginModal").style.display = "none";
+        document.getElementById("appContent").style.display = "block";
+        document.getElementById("userEmailDisplay").innerText = userData.email;
+        loadChatHistory();
+    }
+
+    // ==================== FUNÇÕES DO ORÇAMENTO ====================
+    function toggleHourMode() {
+        hourModeActive = !hourModeActive;
+        const fixedMode = document.getElementById("fixedServiceMode");
+        const hourMode = document.getElementById("hourServiceMode");
+        const toggleBtn = document.getElementById("toggleHourMode");
+        
+        if(hourModeActive) {
+            fixedMode.style.display = "none";
+            hourMode.style.display = "block";
+            toggleBtn.innerHTML = "🔧 Desativar Serviço por Hora";
+            toggleBtn.style.background = "rgba(34, 197, 94, 0.2)";
+            toggleBtn.style.borderColor = "#22c55e";
+            toggleBtn.style.color = "#22c55e";
+            // Reset timer quando ativar modo hora
+            resetTimer();
+        } else {
+            fixedMode.style.display = "block";
+            hourMode.style.display = "none";
+            toggleBtn.innerHTML = "⏱️ Ativar Serviço por Hora";
+            toggleBtn.style.background = "rgba(245, 158, 11, 0.15)";
+            toggleBtn.style.borderColor = "#F59E0B";
+            toggleBtn.style.color = "#F59E0B";
+            pauseTimer();
+        }
+    }
+
+    function updateHourRate() {
+        const categoriaSelect = document.getElementById("categoriaHora");
+        const valorHoraInput = document.getElementById("valorHora");
+        valorHoraInput.value = categoriaSelect.value;
+    }
+
+    function gerarOrcamento() {
+        let cliente = document.getElementById("cliente").value.trim();
+        if(cliente === "") {
+            document.getElementById("resultado").innerHTML = "⚠️ Por favor, informe o nome do cliente.";
+            return;
+        }
+        
+        let material = document.getElementById("material").value.trim() || "Não especificado";
+        let valorMaterial = parseFloat(document.getElementById("valorMaterial").value) || 0;
+        let totalMaoObra = 0;
+        
+        if(hourModeActive) {
+            let descricao = document.getElementById("servicoDescricao").value.trim() || "Serviço elétrico";
+            let horas = parseFloat(document.getElementById("horasTrabalhadas").value) || 1;
+            let valorHora = parseFloat(document.getElementById("valorHora").value) || 85;
+            let categoriaTexto = document.getElementById("categoriaHora").options[document.getElementById("categoriaHora").selectedIndex].text;
+            
+            totalMaoObra = horas * valorHora;
+            
+            textoWhatsapp = 
+`⚡ ELETROJÁ - ORÇAMENTO POR HORA
+
+Cliente: ${cliente}
+Serviço: ${descricao}
+Horas trabalhadas: ${horas}h
+Valor por hora: R$ ${valorHora.toFixed(2)}
+Categoria: ${categoriaTexto}
+Mão de Obra: R$ ${totalMaoObra.toFixed(2)}
+Material: ${material}
+Valor Material: R$ ${valorMaterial.toFixed(2)}
+TOTAL: R$ ${(totalMaoObra + valorMaterial).toFixed(2)}
+
+EletroJá - Chamou, resolveu!`;
+            
+            document.getElementById("resultado").innerHTML = `
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                    <strong style="color:#F59E0B; font-size:18px;">⚡ ORÇAMENTO POR HORA</strong>
+                    <div>👤 Cliente: <strong>${cliente}</strong></div>
+                    <div>📝 Serviço: ${descricao}</div>
+                    <div>⏱️ ${horas}h × R$ ${valorHora.toFixed(2)} = <strong>R$ ${totalMaoObra.toFixed(2)}</strong></div>
+                    <div>📦 Material: ${material} - R$ ${valorMaterial.toFixed(2)}</div>
+                    <hr style="border-color:#F59E0B40;">
+                    <div style="font-size:18px; font-weight:800;">💰 TOTAL: R$ ${(totalMaoObra + valorMaterial).toFixed(2)}</div>
+                </div>
+            `;
+        } else {
+            let selectServico = document.getElementById("servico");
+            let selectedOption = selectServico.options[selectServico.selectedIndex];
+            let nomeServico = selectedOption.getAttribute("data-nome") || selectedOption.text.split(" - ")[0];
+            let valorServico = parseFloat(selectServico.value);
+            let quantidade = parseFloat(document.getElementById("quantidade").value) || 1;
+            
+            if(isNaN(valorServico)) {
+                document.getElementById("resultado").innerHTML = "⚠️ Selecione um serviço válido.";
+                return;
+            }
+            
+            totalMaoObra = valorServico * quantidade;
+            
+            textoWhatsapp = 
+`⚡ ELETROJÁ - ORÇAMENTO FIXO
+
+Cliente: ${cliente}
+Serviço: ${nomeServico}
+Quantidade: ${quantidade}
+Valor Unitário: R$ ${valorServico.toFixed(2)}
+Mão de Obra: R$ ${totalMaoObra.toFixed(2)}
+Material: ${material}
+Valor Material: R$ ${valorMaterial.toFixed(2)}
+TOTAL: R$ ${(totalMaoObra + valorMaterial).toFixed(2)}
+
+EletroJá - Qualidade e rapidez!`;
+            
+            document.getElementById("resultado").innerHTML = `
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                    <strong style="color:#F59E0B; font-size:18px;">⚡ ORÇAMENTO FIXO</strong>
+                    <div>👤 Cliente: <strong>${cliente}</strong></div>
+                    <div>🛠 Serviço: ${nomeServico}</div>
+                    <div>🔢 Quantidade: ${quantidade} × R$ ${valorServico.toFixed(2)}</div>
+                    <div>💰 Mão de Obra: <strong>R$ ${totalMaoObra.toFixed(2)}</strong></div>
+                    <div>📦 Material: ${material} - R$ ${valorMaterial.toFixed(2)}</div>
+                    <hr style="border-color:#F59E0B40;">
+                    <div style="font-size:18px; font-weight:800;">💰 TOTAL: R$ ${(totalMaoObra + valorMaterial).toFixed(2)}</div>
+                </div>
+            `;
+        }
+    }
+
+    function enviarWhatsapp() {
+        if(!textoWhatsapp) {
+            alert("⚠️ Gere um orçamento primeiro!");
+            return;
+        }
+        window.open(`https://wa.me/?text=${encodeURIComponent(textoWhatsapp)}`, "_blank");
+    }
+
+    // ==================== CHAT ====================
+    function enviarMensagem() {
+        let msg = document.getElementById("mensagem").value.trim();
+        if(msg === "") return;
+        
+        let userData = isLoggedIn();
+        let nome = userData ? (userData.nome || userData.email.split('@')[0]) : "Usuário";
+        
+        let chatDiv = document.getElementById("chat");
+        chatDiv.innerHTML += `<div class="msg"><strong>${nome}:</strong> ${msg}</div>`;
+        document.getElementById("mensagem").value = "";
+        chatDiv.scrollTop = chatDiv.scrollHeight;
+        
+        let history = JSON.parse(localStorage.getItem("eletroja_chat") || "[]");
+        history.push({ user: nome, msg: msg, time: Date.now() });
+        if(history.length > 50) history.shift();
+        localStorage.setItem("eletroja_chat", JSON.stringify(history));
+    }
+
+    function loadChatHistory() {
+        let history = JSON.parse(localStorage.getItem("eletroja_chat") || "[]");
+        let chatDiv = document.getElementById("chat");
+        if(history.length > 0 && chatDiv.children.length <= 3) {
+            history.slice(-8).forEach(item => {
+                chatDiv.innerHTML += `<div class="msg"><strong>${item.user}:</strong> ${item.msg}</div>`;
+            });
+            chatDiv.scrollTop = chatDiv.scrollHeight;
+        }
+    }
+
+    // ==================== EVENTOS E INICIALIZAÇÃO ====================
+    function setupEventListeners() {
+        document.getElementById("btnLogin").addEventListener("click", () => {
+            const email = document.getElementById("loginEmail").value.trim();
+            const senha = document.getElementById("loginSenha").value.trim();
+            if(!email || !senha) { alert("Preencha e-mail e senha"); return; }
+            if(loginUser(email, senha)) {
+                afterLogin(isLoggedIn());
+            } else {
+                alert("❌ E-mail ou senha inválidos");
+            }
+        });
+        
+        document.getElementById("btnCadastroSimples").addEventListener("click", () => {
+            const email = document.getElementById("loginEmail").value.trim();
+            const senha = document.getElementById("loginSenha").value.trim();
+            if(!email || !senha) { alert("Preencha e-mail e senha"); return; }
+            if(registerUser(email, senha)) {
+                alert(`✅ Conta criada! Faça login.`);
+            } else {
+                alert("Usuário já existe");
+            }
+        });
+        
+        document.getElementById("logoutGlobalBtn").addEventListener("click", logout);
+        document.getElementById("toggleHourMode").addEventListener("click", toggleHourMode);
+        document.getElementById("categoriaHora").addEventListener("change", updateHourRate);
+        
+        // Timer events
+        document.getElementById("timerStartBtn").addEventListener("click", startTimer);
+        document.getElementById("timerPauseBtn").addEventListener("click", pauseTimer);
+        document.getElementById("timerResetBtn").addEventListener("click", resetTimer);
+        
+        document.getElementById("mensagem").addEventListener("keypress", (e) => {
+            if(e.key === "Enter") enviarMensagem();
+        });
+    }
+
+    function init() {
+        carregarServicosPersonalizados();
+        recarregarSelectServicos();
+        loadUsers();
+        setupEventListeners();
+        const logged = isLoggedIn();
+        if(logged) {
+            afterLogin(logged);
+            loadChatHistory();
+        } else {
+            document.getElementById("loginModal").style.display = "flex";
+        }
+        updateHourRate();
+        updateTimerDisplay();
+    }
+    
+    // Expor funções globalmente
+    window.gerarOrcamento = gerarOrcamento;
+    window.enviarWhatsapp = enviarWhatsapp;
+    window.enviarMensagem = enviarMensagem;
+    window.abrirModalPersonalizado = abrirModalPersonalizado;
+    window.fecharModalPersonalizado = fecharModalPersonalizado;
+    window.adicionarServicoPersonalizado = adicionarServicoPersonalizado;
+    window.removerServicoPersonalizado = removerServicoPersonalizado;
+    window.usarTempoDoTimer = usarTempoDoTimer;
+    
+    init();
+</script>
+</body>
+</html>
