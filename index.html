@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1120">
+  <meta name="description" content="EletroJá — ferramenta simples para orçamentos de serviços elétricos.">
+  <title>EletroJá — Chamou, resolveu</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --surface: #111827;
+      --surface-2: #1e293b;
+      --surface-3: #0f172a;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --line: #334155;
+      --primary: #f59e0b;
+      --primary-light: #fbbf24;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --radius: 22px;
+      --shadow: 0 14px 35px rgba(0, 0, 0, .28);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: radial-gradient(circle at top right, #172554 0, var(--bg) 42%);
+      color: var(--text);
+      font: 15px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 3px solid rgba(251, 191, 36, .45);
+      outline-offset: 2px;
+    }
+    .container { width: min(100% - 24px, 920px); margin: 0 auto; }
+
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 14px 0 4px;
+    }
+    .brand { color: var(--primary-light); font-weight: 800; letter-spacing: .02em; }
+    .profile-pill {
+      display: flex; align-items: center; gap: 8px; max-width: 55%;
+      border: 1px solid rgba(245, 158, 11, .28); border-radius: 999px;
+      background: rgba(15, 23, 42, .72); color: var(--muted); padding: 6px 10px;
+      font-size: 12px;
+    }
+    .profile-pill strong { color: var(--primary-light); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .link-button { color: var(--primary-light); background: none; border: 0; padding: 0; font-size: 12px; }
+
+    header {
+      margin: 14px 0 20px; padding: 26px 20px; text-align: center;
+      border: 1px solid rgba(245, 158, 11, .25); border-radius: 28px;
+      background: linear-gradient(135deg, rgba(15, 23, 42, .94), rgba(30, 41, 59, .78));
+      box-shadow: var(--shadow);
+    }
+    header h1 { margin: 0; color: var(--primary-light); font-size: clamp(26px, 6vw, 38px); }
+    header p { margin: 8px 0 0; color: var(--muted); }
+    .tag { display: inline-block; margin: 8px 0 0 6px; padding: 3px 9px; border-radius: 999px; background: rgba(245,158,11,.14); color: var(--primary-light); font-size: 11px; vertical-align: middle; }
+
+    .card {
+      margin: 0 0 20px; padding: clamp(16px, 4vw, 24px);
+      border: 1px solid rgba(245, 158, 11, .18); border-radius: var(--radius);
+      background: rgba(30, 41, 59, .72); box-shadow: var(--shadow);
+    }
+    .card h2 { margin: 0 0 18px; color: var(--primary-light); font-size: 20px; }
+    .section-title { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .field { margin: 0 0 12px; }
+    .field.full { grid-column: 1 / -1; }
+    label { display: block; margin: 0 0 6px 4px; color: var(--muted); font-size: 13px; }
+    input, select, textarea {
+      width: 100%; border: 1px solid var(--line); border-radius: 14px; padding: 12px 13px;
+      background: var(--surface-3); color: var(--text);
+    }
+    textarea { min-height: 86px; resize: vertical; }
+    input::placeholder, textarea::placeholder { color: #64748b; }
+    .hint { margin: 5px 4px 0; color: var(--muted); font-size: 12px; }
+
+    .button-row { display: flex; flex-wrap: wrap; gap: 10px; }
+    button {
+      min-height: 44px; border: 0; border-radius: 13px; padding: 11px 15px;
+      background: linear-gradient(100deg, var(--primary), var(--primary-light)); color: #111827;
+      font-weight: 750; transition: transform .15s ease, filter .15s ease;
+    }
+    button:hover { filter: brightness(1.07); }
+    button:active { transform: scale(.98); }
+    button.secondary { border: 1px solid var(--primary); background: rgba(245,158,11,.10); color: var(--primary-light); }
+    button.success { background: var(--success); color: white; }
+    button.danger { background: var(--danger); color: white; }
+    button.small { min-height: 36px; padding: 8px 11px; font-size: 13px; }
+    button:disabled { cursor: not-allowed; opacity: .55; }
+
+    .mode-toggle { width: 100%; margin-bottom: 16px; }
+    .service-info, .result, .custom-list, .chat {
+      border-radius: 16px; background: rgba(10, 15, 28, .76); border: 1px solid rgba(148,163,184,.14);
+    }
+    .service-info { padding: 10px 12px; margin: -3px 0 14px; color: var(--muted); font-size: 13px; }
+    .result { min-height: 82px; margin: 16px 0; padding: 16px; border-left: 4px solid var(--primary); }
+    .result-empty { color: var(--muted); }
+    .result h3 { margin: 0 0 10px; color: var(--primary-light); }
+    .total { margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(245,158,11,.3); color: var(--primary-light); font-size: 21px; font-weight: 800; }
+
+    .custom-list { padding: 10px; margin: 10px 0 14px; }
+    .custom-list:empty { display: none; }
+    .custom-item { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 0; border-bottom: 1px solid rgba(148,163,184,.14); }
+    .custom-item:last-child { border-bottom: 0; }
+    .custom-item span:first-child { overflow-wrap: anywhere; }
+    .custom-item strong { color: var(--success); white-space: nowrap; }
+
+    .timer {
+      margin: 4px 0 16px; padding: 18px; text-align: center;
+      border: 1px solid rgba(245,158,11,.42); border-radius: 18px;
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+    }
+    .timer-display { margin-bottom: 12px; color: var(--primary-light); font: 800 clamp(34px, 10vw, 52px)/1.1 ui-monospace, SFMono-Regular, Consolas, monospace; letter-spacing: 3px; }
+    .timer-status { margin: 10px 0 0; color: var(--muted); font-size: 13px; }
+
+    .chat { max-height: 290px; overflow-y: auto; padding: 10px; }
+    .message { margin: 7px 0; padding: 10px 12px; border-radius: 12px; background: #172033; overflow-wrap: anywhere; }
+    .message strong { color: var(--primary-light); }
+    .chat-form { display: flex; gap: 8px; margin-top: 10px; }
+    .chat-form input { min-width: 0; }
+    .chat-form button { flex: 0 0 auto; }
+    .footer { padding: 12px 0 28px; text-align: center; color: #64748b; font-size: 12px; }
+
+    .modal {
+      position: fixed; inset: 0; z-index: 10; display: flex; align-items: center; justify-content: center;
+      padding: 16px; background: rgba(0,0,0,.78); backdrop-filter: blur(8px);
+    }
+    .modal[hidden] { display: none; }
+    .modal-card { width: min(100%, 420px); padding: 24px; border: 1px solid var(--primary); border-radius: 24px; background: var(--surface); box-shadow: var(--shadow); }
+    .modal-card h2 { margin: 0 0 8px; color: var(--primary-light); }
+    .modal-card p { margin: 0 0 16px; color: var(--muted); }
+
+    @media (max-width: 640px) {
+      .grid { grid-template-columns: 1fr; gap: 0; }
+      .field.full { grid-column: auto; }
+      .button-row > button { flex: 1 1 140px; }
+      .chat-form { flex-direction: column; }
+      .chat-form button { width: 100%; }
+      .profile-pill { max-width: 62%; }
+    }
+    @media print {
+      body { background: white; color: #111; }
+      .topbar, header, .no-print, .card:not(:first-of-type), .footer { display: none !important; }
+      .card { border: 0; box-shadow: none; padding: 0; }
+      .result { color: #111; background: white; border: 1px solid #999; }
+      .result h3, .total { color: #111; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar no-print">
+      <div class="brand">⚡ EletroJá</div>
+      <div class="profile-pill" title="Perfil salvo somente neste navegador">
+        <span>👤</span><strong id="profileLabel">Eletricista</strong>
+        <button class="link-button" id="editProfileButton" type="button">Editar</button>
+      </div>
+    </div>
+
+    <header>
+      <h1>⚡ ELETROJÁ <span class="tag">Chamou, resolveu</span></h1>
+      <p>Orçamentos rápidos para serviços elétricos</p>
+    </header>
+
+    <main>
+      <section class="card" aria-labelledby="quoteTitle">
+        <div class="section-title">
+          <h2 id="quoteTitle">📋 Novo orçamento</h2>
+        </div>
+
+        <button class="secondary mode-toggle" id="hourModeButton" type="button">⏱️ Ativar serviço por hora</button>
+
+        <div class="grid">
+          <div class="field full">
+            <label for="client">Nome do cliente *</label>
+            <input id="client" type="text" maxlength="80" placeholder="Ex.: João da Silva" autocomplete="name">
+          </div>
+        </div>
+
+        <div id="fixedMode">
+          <div class="field">
+            <label for="service">Serviço</label>
+            <select id="service"></select>
+          </div>
+          <div class="service-info" id="serviceInfo" aria-live="polite"></div>
+          <button class="secondary small no-print" id="addCustomButton" type="button">✨ Adicionar serviço personalizado</button>
+          <div class="custom-list" id="customServices" aria-live="polite"></div>
+          <div class="field">
+            <label for="quantity">Quantidade</label>
+            <input id="quantity" type="number" min="1" max="999" step="1" value="1">
+          </div>
+        </div>
+
+        <div id="hourMode" hidden>
+          <div class="timer">
+            <div class="timer-display" id="timerDisplay" aria-live="polite">00:00:00</div>
+            <div class="button-row no-print">
+              <button class="success small" id="startTimer" type="button">▶ Iniciar</button>
+              <button class="secondary small" id="pauseTimer" type="button">⏸ Pausar</button>
+              <button class="danger small" id="resetTimer" type="button">↻ Zerar</button>
+            </div>
+            <div class="timer-status">Tempo calculado: <strong id="calculatedHours">0,00</strong> hora(s)</div>
+          </div>
+          <div class="field">
+            <label for="hourDescription">Descrição do serviço</label>
+            <input id="hourDescription" type="text" maxlength="120" placeholder="Ex.: manutenção no quadro">
+          </div>
+          <div class="grid">
+            <div class="field">
+              <label for="workedHours">Horas trabalhadas</label>
+              <input id="workedHours" type="number" min="0.01" max="999" step="0.01" value="1">
+            </div>
+            <div class="field">
+              <label for="hourRate">Valor por hora (R$)</label>
+              <input id="hourRate" type="number" min="0" max="999999" step="1" value="85">
+            </div>
+          </div>
+          <div class="field">
+            <label for="hourCategory">Categoria sugerida</label>
+            <select id="hourCategory">
+              <option value="85">🔧 Serviço básico — R$ 85/h</option>
+              <option value="110">⚙️ Manutenção intermediária — R$ 110/h</option>
+              <option value="150">🔌 Instalação avançada — R$ 150/h</option>
+              <option value="200">🚨 Emergência 24h — R$ 200/h</option>
+            </select>
+          </div>
+          <button class="secondary small no-print" id="useTimerButton" type="button">⏰ Usar tempo do cronômetro</button>
+        </div>
+
+        <div class="grid" style="margin-top: 14px">
+          <div class="field">
+            <label for="material">Material utilizado</label>
+            <input id="material" type="text" maxlength="120" placeholder="Opcional">
+          </div>
+          <div class="field">
+            <label for="materialValue">Valor do material (R$)</label>
+            <input id="materialValue" type="number" min="0" max="999999" step="0.01" value="0">
+          </div>
+        </div>
+
+        <div class="button-row no-print">
+          <button id="generateQuote" type="button">✨ Gerar orçamento</button>
+          <button class="secondary" id="clearQuote" type="button">Limpar</button>
+        </div>
+
+        <div class="result" id="result" aria-live="polite" aria-atomic="true">
+          <div class="result-empty">📄 Seu orçamento aparecerá aqui...</div>
+        </div>
+        <div class="button-row no-print">
+          <button class="success" id="whatsappButton" type="button" disabled>📱 Abrir no WhatsApp</button>
+          <button class="secondary" id="copyButton" type="button" disabled>📋 Copiar texto</button>
+          <button class="secondary" id="printButton" type="button" disabled>🖨️ Imprimir</button>
+        </div>
+      </section>
+
+      <section class="card no-print" aria-labelledby="communityTitle">
+        <h2 id="communityTitle">💬 Anotações da comunidade</h2>
+        <div class="chat" id="chat" aria-live="polite">
+          <div class="message"><strong>Carlos Silva:</strong> Alguém tem indicação de disjuntor para chuveiro 5500 W?</div>
+          <div class="message"><strong>Mariana Souza:</strong> Confira a corrente, a bitola e o DR antes de instalar.</div>
+          <div class="message"><strong>EletroJá:</strong> Use este espaço para anotar dicas locais. Os dados ficam somente neste navegador.</div>
+        </div>
+        <form class="chat-form" id="chatForm">
+          <input id="message" type="text" maxlength="300" placeholder="Digite uma mensagem" autocomplete="off">
+          <button type="submit">Enviar</button>
+        </form>
+      </section>
+    </main>
+
+    <div class="footer">EletroJá © 2026 — ferramenta local para orçamento de serviços elétricos.</div>
+  </div>
+
+  <div class="modal" id="profileModal" hidden role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+    <div class="modal-card">
+      <h2 id="profileTitle">👤 Seu perfil local</h2>
+      <p>Esses dados ficam apenas no navegador. Este projeto não possui servidor nem sistema de login.</p>
+      <div class="field">
+        <label for="profileName">Nome</label>
+        <input id="profileName" type="text" maxlength="80" placeholder="Seu nome">
+      </div>
+      <div class="field">
+        <label for="profileEmail">E-mail (opcional)</label>
+        <input id="profileEmail" type="email" maxlength="120" placeholder="voce@exemplo.com">
+      </div>
+      <div class="button-row">
+        <button id="saveProfile" type="button">Salvar perfil</button>
+        <button class="secondary" id="cancelProfile" type="button">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="customModal" hidden role="dialog" aria-modal="true" aria-labelledby="customTitle">
+    <div class="modal-card">
+      <h2 id="customTitle">✨ Novo serviço</h2>
+      <div class="field">
+        <label for="customName">Nome do serviço</label>
+        <input id="customName" type="text" maxlength="80" placeholder="Ex.: Instalação de ventilador">
+      </div>
+      <div class="field">
+        <label for="customValue">Valor (R$)</label>
+        <input id="customValue" type="number" min="0.01" max="999999" step="0.01" placeholder="0,00">
+      </div>
+      <div class="button-row">
+        <button id="saveCustom" type="button">Adicionar</button>
+        <button class="secondary" id="cancelCustom" type="button">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    'use strict';
+
+    const SERVICES = {
+      'ILUMINAÇÃO': [
+        ['Instalação spot simples', 50], ['Spot direcionável', 65], ['Plafon simples', 70],
+        ['Painel LED embutir', 90], ['Painel sobrepor', 80], ['Perfil LED instalado', 220],
+        ['Fita LED', 50], ['Pendente simples', 250], ['Pendente duplo/triplo', 450],
+        ['Lustre simples', 300], ['Lustre cristal/grande', 500], ['Refletor LED', 180],
+        ['Arandela', 120], ['Trilho eletrificado', 220]
+      ],
+      'TOMADAS E INTERRUPTORES': [
+        ['Tomada simples', 50], ['Tomada dupla', 70], ['Tomada 20 A', 75],
+        ['Interruptor simples', 55], ['Interruptor paralelo', 120], ['Interruptor intermediário', 150],
+        ['Conjunto tomada + interruptor', 110], ['Campainha/interfone', 300]
+      ],
+      'INFRAESTRUTURA': [
+        ['Eletroduto PVC embutido', 25], ['Eletroduto galvanizado', 50], ['Perfilado', 80],
+        ['Eletrocalha', 120], ['Leito aramado', 140], ['Canaleta', 35],
+        ['Passagem de cabo simples', 12], ['Passagem de cabo grosso', 40]
+      ],
+      'QUADROS ELÉTRICOS': [
+        ['Montagem quadro pequeno', 600], ['Quadro residencial completo', 1500], ['Quadro comercial', 5000],
+        ['Troca de disjuntor simples', 120], ['Instalação DR', 250], ['Instalação DPS', 180],
+        ['Identificação de circuitos', 450]
+      ],
+      'PADRÃO / ENTRADA': [
+        ['Padrão monofásico', 1800], ['Padrão bifásico', 2500], ['Padrão trifásico', 5000],
+        ['Troca de poste padrão', 2500], ['Aterramento completo', 1200]
+      ],
+      'CHUVEIROS E EQUIPAMENTOS': [
+        ['Instalação de chuveiro', 180], ['Torneira elétrica', 150], ['Cooktop elétrico', 250],
+        ['Forno elétrico', 300], ['Coifa', 450], ["Bomba d'água", 1200]
+      ],
+      'AUTOMAÇÃO / ESPECIAL': [
+        ['Instalação Alexa', 500], ['Interruptor smart', 180], ['Automação de iluminação', 5000],
+        ['Fechadura digital', 450], ['Sensor de presença', 180], ['Câmera de segurança', 350]
+      ],
+      'AR-CONDICIONADO': [
+        ['Infra elétrica ar 9k/12k', 600], ['Infra elétrica 18k/24k', 900], ['Circuito exclusivo', 700]
+      ],
+      'VALORES POR DIÁRIA': [['Eletricista profissional', 800], ['Ajudante', 250]]
+    };
+
+    const STORAGE = {
+      custom: 'eletroja_custom_services_v2',
+      profile: 'eletroja_profile_v2',
+      chat: 'eletroja_chat_v2'
+    };
+    const money = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+    const $ = (id) => document.getElementById(id);
+    const state = {
+      hourMode: false,
+      customServices: [],
+      quoteText: '',
+      timer: { running: false, elapsed: 0, startedAt: 0, interval: null }
+    };
+
+    function readStorage(key, fallback) {
+      try {
+        const value = localStorage.getItem(key);
+        return value ? JSON.parse(value) : fallback;
+      } catch (_) {
+        return fallback;
+      }
+    }
+
+    function writeStorage(key, value) {
+      try { localStorage.setItem(key, JSON.stringify(value)); } catch (_) { /* armazenamento pode estar bloqueado */ }
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>'"]/g, (char) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+      })[char]);
+    }
+
+    function toNumber(value, fallback = 0) {
+      const number = Number.parseFloat(value);
+      return Number.isFinite(number) ? number : fallback;
+    }
+
+    function formatMoney(value) { return money.format(toNumber(value)); }
+
+    function formatTimer(totalSeconds) {
+      const seconds = Math.max(0, Math.floor(totalSeconds));
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const secs = seconds % 60;
+      return [hours, minutes, secs].map((part) => String(part).padStart(2, '0')).join(':');
+    }
+
+    function updateTimerDisplay() {
+      const nowElapsed = state.timer.running
+        ? state.timer.elapsed + (Date.now() - state.timer.startedAt) / 1000
+        : state.timer.elapsed;
+      $('timerDisplay').textContent = formatTimer(nowElapsed);
+      $('calculatedHours').textContent = (nowElapsed / 3600).toFixed(2).replace('.', ',');
+    }
+
+    function startTimer() {
+      if (state.timer.running) return;
+      state.timer.running = true;
+      state.timer.startedAt = Date.now();
+      state.timer.interval = window.setInterval(updateTimerDisplay, 250);
+      updateTimerDisplay();
+    }
+
+    function pauseTimer() {
+      if (!state.timer.running) return;
+      state.timer.elapsed += (Date.now() - state.timer.startedAt) / 1000;
+      state.timer.running = false;
+      window.clearInterval(state.timer.interval);
+      state.timer.interval = null;
+      updateTimerDisplay();
+    }
+
+    function resetTimer() {
+      pauseTimer();
+      state.timer.elapsed = 0;
+      state.timer.startedAt = 0;
+      updateTimerDisplay();
+    }
+
+    function loadCustomServices() {
+      const saved = readStorage(STORAGE.custom, []);
+      state.customServices = Array.isArray(saved)
+        ? saved.filter((item) => item && typeof item.name === 'string' && Number.isFinite(Number(item.value)))
+        : [];
+      renderCustomServices();
+      renderServices();
+    }
+
+    function saveCustomServices() { writeStorage(STORAGE.custom, state.customServices); }
+
+    function renderServices() {
+      const select = $('service');
+      select.replaceChildren();
+      if (state.customServices.length) {
+        const customGroup = document.createElement('optgroup');
+        customGroup.label = '✨ MEUS SERVIÇOS';
+        state.customServices.forEach((item, index) => {
+          const option = new Option(`${item.name} — ${formatMoney(item.value)}`, `custom-${index}`);
+          option.dataset.name = item.name;
+          option.dataset.value = String(item.value);
+          customGroup.append(option);
+        });
+        select.append(customGroup);
+      }
+      Object.entries(SERVICES).forEach(([category, items]) => {
+        const group = document.createElement('optgroup');
+        group.label = category;
+        items.forEach(([name, value]) => {
+          const option = new Option(`${name} — ${formatMoney(value)}`, String(value));
+          option.dataset.name = name;
+          option.dataset.value = String(value);
+          group.append(option);
+        });
+        select.append(group);
+      });
+      updateServiceInfo();
+    }
+
+    function updateServiceInfo() {
+      const option = $('service').selectedOptions[0];
+      if (!option) { $('serviceInfo').textContent = 'Selecione um serviço para ver o valor.'; return; }
+      $('serviceInfo').textContent = `💡 ${option.dataset.name} — ${formatMoney(option.dataset.value)}`;
+    }
+
+    function renderCustomServices() {
+      const container = $('customServices');
+      container.replaceChildren();
+      state.customServices.forEach((item, index) => {
+        const row = document.createElement('div');
+        row.className = 'custom-item';
+        const name = document.createElement('span');
+        name.textContent = item.name;
+        const value = document.createElement('strong');
+        value.textContent = formatMoney(item.value);
+        const remove = document.createElement('button');
+        remove.className = 'danger small';
+        remove.type = 'button';
+        remove.textContent = 'Excluir';
+        remove.setAttribute('aria-label', `Excluir ${item.name}`);
+        remove.addEventListener('click', () => {
+          state.customServices.splice(index, 1);
+          saveCustomServices();
+          renderCustomServices();
+          renderServices();
+        });
+        row.append(name, value, remove);
+        container.append(row);
+      });
+    }
+
+    function openModal(modal) {
+      modal.hidden = false;
+      const firstInput = modal.querySelector('input');
+      if (firstInput) window.setTimeout(() => firstInput.focus(), 0);
+    }
+
+    function closeModal(modal) { modal.hidden = true; }
+
+    function loadProfile() {
+      const profile = readStorage(STORAGE.profile, { name: 'Eletricista', email: '' });
+      $('profileLabel').textContent = profile.name || 'Eletricista';
+      $('profileName').value = profile.name || '';
+      $('profileEmail').value = profile.email || '';
+    }
+
+    function saveProfile() {
+      const name = $('profileName').value.trim() || 'Eletricista';
+      const email = $('profileEmail').value.trim();
+      writeStorage(STORAGE.profile, { name, email });
+      $('profileLabel').textContent = name;
+      closeModal($('profileModal'));
+    }
+
+    function toggleHourMode() {
+      state.hourMode = !state.hourMode;
+      $('fixedMode').hidden = state.hourMode;
+      $('hourMode').hidden = !state.hourMode;
+      $('hourModeButton').textContent = state.hourMode ? '🔧 Voltar para serviço fixo' : '⏱️ Ativar serviço por hora';
+      if (!state.hourMode) pauseTimer();
+    }
+
+    function useTimerTime() {
+      const elapsed = state.timer.running
+        ? state.timer.elapsed + (Date.now() - state.timer.startedAt) / 1000
+        : state.timer.elapsed;
+      if (elapsed < 1) {
+        window.alert('Inicie o cronômetro antes de usar o tempo.');
+        return;
+      }
+      $('workedHours').value = (elapsed / 3600).toFixed(2);
+    }
+
+    function getQuoteData() {
+      const client = $('client').value.trim();
+      if (!client) return { error: 'Informe o nome do cliente.' };
+      const material = $('material').value.trim() || 'Não especificado';
+      const materialValue = Math.max(0, toNumber($('materialValue').value));
+      let serviceName, quantity, unitValue, labor, type;
+
+      if (state.hourMode) {
+        serviceName = $('hourDescription').value.trim() || 'Serviço elétrico';
+        quantity = Math.max(0.01, toNumber($('workedHours').value, 1));
+        unitValue = Math.max(0, toNumber($('hourRate').value, 85));
+        labor = quantity * unitValue;
+        type = 'POR HORA';
+      } else {
+        const option = $('service').selectedOptions[0];
+        if (!option) return { error: 'Selecione um serviço válido.' };
+        serviceName = option.dataset.name || option.textContent;
+        quantity = Math.max(1, Math.floor(toNumber($('quantity').value, 1)));
+        unitValue = Math.max(0, toNumber(option.dataset.value));
+        labor = quantity * unitValue;
+        type = 'FIXO';
+      }
+      return { client, material, materialValue, serviceName, quantity, unitValue, labor, total: labor + materialValue, type };
+    }
+
+    function generateQuote() {
+      const data = getQuoteData();
+      if (data.error) {
+        $('result').innerHTML = `<div class="result-empty">⚠️ ${escapeHtml(data.error)}</div>`;
+        state.quoteText = '';
+        setQuoteActions(false);
+        return;
+      }
+      const profile = readStorage(STORAGE.profile, { name: 'Eletricista' });
+      state.quoteText = [
+        `⚡ ELETROJÁ — ORÇAMENTO ${data.type}`,
+        '',
+        `Cliente: ${data.client}`,
+        `Serviço: ${data.serviceName}`,
+        `Quantidade/horas: ${data.quantity}${data.type === 'POR HORA' ? ' h' : ''}`,
+        `Valor unitário: ${formatMoney(data.unitValue)}`,
+        `Mão de obra: ${formatMoney(data.labor)}`,
+        `Material: ${data.material}`,
+        `Valor do material: ${formatMoney(data.materialValue)}`,
+        `TOTAL: ${formatMoney(data.total)}`,
+        '',
+        `${profile.name || 'EletroJá'} — Chamou, resolveu!`
+      ].join('\n');
+
+      $('result').innerHTML = `
+        <h3>⚡ Orçamento ${escapeHtml(data.type.toLowerCase())}</h3>
+        <div>👤 Cliente: <strong>${escapeHtml(data.client)}</strong></div>
+        <div>🛠️ Serviço: ${escapeHtml(data.serviceName)}</div>
+        <div>🔢 ${escapeHtml(String(data.quantity))}${data.type === 'POR HORA' ? ' h' : ''} × ${escapeHtml(formatMoney(data.unitValue))} = <strong>${escapeHtml(formatMoney(data.labor))}</strong></div>
+        <div>📦 Material: ${escapeHtml(data.material)} — ${escapeHtml(formatMoney(data.materialValue))}</div>
+        <div class="total">💰 TOTAL: ${escapeHtml(formatMoney(data.total))}</div>`;
+      setQuoteActions(true);
+    }
+
+    function setQuoteActions(enabled) {
+      ['whatsappButton', 'copyButton', 'printButton'].forEach((id) => { $(id).disabled = !enabled; });
+    }
+
+    function clearQuote() {
+      $('client').value = '';
+      $('material').value = '';
+      $('materialValue').value = '0';
+      $('quantity').value = '1';
+      $('hourDescription').value = '';
+      $('workedHours').value = '1';
+      resetTimer();
+      $('result').innerHTML = '<div class="result-empty">📄 Seu orçamento aparecerá aqui...</div>';
+      state.quoteText = '';
+      setQuoteActions(false);
+    }
+
+    async function copyQuote() {
+      if (!state.quoteText) return;
+      try {
+        await navigator.clipboard.writeText(state.quoteText);
+        window.alert('Orçamento copiado.');
+      } catch (_) {
+        window.prompt('Copie o texto do orçamento:', state.quoteText);
+      }
+    }
+
+    function openWhatsApp() {
+      if (!state.quoteText) return;
+      window.open(`https://wa.me/?text=${encodeURIComponent(state.quoteText)}`, '_blank', 'noopener,noreferrer');
+    }
+
+    function loadChat() {
+      const messages = readStorage(STORAGE.chat, []);
+      if (!Array.isArray(messages)) return;
+      messages.slice(-30).forEach((item) => addChatMessage(item.name, item.text, false));
+    }
+
+    function addChatMessage(name, text, save = true) {
+      const message = document.createElement('div');
+      message.className = 'message';
+      const strong = document.createElement('strong');
+      strong.textContent = `${name}: `;
+      message.append(strong, document.createTextNode(text));
+      $('chat').append(message);
+      $('chat').scrollTop = $('chat').scrollHeight;
+      if (save) {
+        const messages = readStorage(STORAGE.chat, []);
+        messages.push({ name, text, time: Date.now() });
+        writeStorage(STORAGE.chat, messages.slice(-50));
+      }
+    }
+
+    function sendMessage(event) {
+      event.preventDefault();
+      const text = $('message').value.trim();
+      if (!text) return;
+      const profile = readStorage(STORAGE.profile, { name: 'Eletricista' });
+      addChatMessage(profile.name || 'Eletricista', text);
+      $('message').value = '';
+    }
+
+    function init() {
+      loadProfile();
+      loadCustomServices();
+      loadChat();
+      updateTimerDisplay();
+
+      $('service').addEventListener('change', updateServiceInfo);
+      $('hourModeButton').addEventListener('click', toggleHourMode);
+      $('startTimer').addEventListener('click', startTimer);
+      $('pauseTimer').addEventListener('click', pauseTimer);
+      $('resetTimer').addEventListener('click', resetTimer);
+      $('useTimerButton').addEventListener('click', useTimerTime);
+      $('hourCategory').addEventListener('change', () => { $('hourRate').value = $('hourCategory').value; });
+      $('generateQuote').addEventListener('click', generateQuote);
+      $('clearQuote').addEventListener('click', clearQuote);
+      $('whatsappButton').addEventListener('click', openWhatsApp);
+      $('copyButton').addEventListener('click', copyQuote);
+      $('printButton').addEventListener('click', () => window.print());
+      $('chatForm').addEventListener('submit', sendMessage);
+
+      $('editProfileButton').addEventListener('click', () => openModal($('profileModal')));
+      $('saveProfile').addEventListener('click', saveProfile);
+      $('cancelProfile').addEventListener('click', () => closeModal($('profileModal')));
+      $('addCustomButton').addEventListener('click', () => openModal($('customModal')));
+      $('saveCustom').addEventListener('click', () => {
+        const name = $('customName').value.trim();
+        const value = toNumber($('customValue').value);
+        if (!name || value <= 0) { window.alert('Informe o nome e um valor válido.'); return; }
+        state.customServices.push({ name, value });
+        saveCustomServices();
+        renderCustomServices();
+        renderServices();
+        $('customName').value = '';
+        $('customValue').value = '';
+        closeModal($('customModal'));
+      });
+      $('cancelCustom').addEventListener('click', () => closeModal($('customModal')));
+
+      [ $('profileModal'), $('customModal') ].forEach((modal) => {
+        modal.addEventListener('click', (event) => { if (event.target === modal) closeModal(modal); });
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>
